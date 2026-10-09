@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2e7d32">
+<title>DGN Cyber Cafe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Devanagari', system-ui, sans-serif; }
+  body { background: linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 100%); color: #222; min-height: 100vh; }
+  .container { max-width: 500px; margin: 0 auto; padding: 16px; min-height: 100vh; }
+
+  .logo-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 20px; padding: 24px 20px; text-align: center;
+    box-shadow: 0 10px 30px rgba(46,125,50,0.15), 0 2px 6px rgba(0,0,0,0.05);
+    margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.8);
+  }
+  .logo-icon { font-size: 64px; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(46,125,50,0.3)); }
+  .logo-card h1 { color: #2e7d32; font-size: 24px; margin-bottom: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .logo-card .subtitle { color: #666; font-size: 13px; letter-spacing: 0.5px; }
+
+  .wa-box {
+    background: linear-gradient(145deg, #e8f5e9, #d7ebd9);
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;
+    text-align: center; border: 1px solid #c8e6c9;
+  }
+  .wa-box .wa-label { font-size: 12px; color: #555; }
+  .wa-box .wa-num { font-size: 17px; color: #1b5e20; font-weight: 700; letter-spacing: 1px; }
+
+  input {
+    width: 100%; padding: 16px; border: 2px solid #c8e6c9; border-radius: 12px;
+    font-size: 16px; text-align: center; letter-spacing: 3px; background: #fff;
+    font-weight: 600; color: #1b5e20;
+  }
+  input:focus { outline: none; border-color: #2e7d32; box-shadow: 0 0 0 4px rgba(46,125,50,0.12); }
+
+  .btn-3d {
+    background: linear-gradient(145deg, #43a047, #2e7d32); color: #fff;
+    border: none; border-radius: 14px; padding: 16px; font-size: 17px;
+    width: 100%; cursor: pointer; font-weight: 700; letter-spacing: 0.5px;
+    box-shadow: 0 6px 0 #1b5e20, 0 8px 16px rgba(46,125,50,0.35);
+    transition: all 0.1s ease;
+  }
+  .btn-3d:active { transform: translateY(4px); box-shadow: 0 2px 0 #1b5e20, 0 4px 8px rgba(46,125,50,0.25); }
+
+  .btn-3d.secondary {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0); color: #2e7d32;
+    box-shadow: 0 6px 0 #c8e6c9, 0 8px 16px rgba(46,125,50,0.18);
+  }
+  .btn-3d.secondary:active { box-shadow: 0 2px 0 #c8e6c9, 0 4px 8px rgba(46,125,50,0.12); }
+
+  .service-list { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+  .service-list.open { max-height: 3000px; margin-top: 12px; }
+  .service-container { background: #fff; border-radius: 16px; padding: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08); border: 1px solid #f0f0f0; }
+  .service-item {
+    display: flex; align-items: center; padding: 14px 12px;
+    border-radius: 12px; cursor: pointer; transition: all 0.15s ease;
+    margin-bottom: 4px; background: #fff;
+  }
+  .service-item:last-child { margin-bottom: 0; }
+  .service-item:active { background: #e8f5e9; transform: scale(0.98); }
+  .service-item.highlight {
+    background: linear-gradient(145deg, #fff8e1, #ffecb3);
+    border: 1px solid #ffd54f; margin-bottom: 8px;
+  }
+  .service-item.highlight .title { color: #e65100; font-weight: 700; }
+  .service-item .icon { font-size: 24px; margin-right: 14px; width: 32px; text-align: center; }
+  .service-item .title { flex: 1; font-size: 14.5px; color: #333; font-weight: 500; }
+  .service-item .fee { font-size: 11px; color: #2e7d32; margin-top: 3px; font-weight: 600; }
+  .service-item.highlight .fee { color: #bf360c; }
+  .service-item .arrow { color: #bbb; font-size: 20px; margin-left: 6px; }
+
+  .top-bar { display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding: 12px 16px; background: #fff;
+    border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .top-bar .phone { font-weight: 700; color: #2e7d32; font-size: 15px; }
+  .top-bar .muted { color: #777; font-size: 12px; }
+
+  .notice { background: linear-gradient(145deg, #fff8e1, #fff3c4);
+    border-left: 4px solid #ffb300; padding: 12px 14px; border-radius: 10px;
+    font-size: 13px; margin-bottom: 14px; color: #5d4037; line-height: 1.5; }
+
+  .promo { background: linear-gradient(145deg, #2e7d32, #1b5e20); color: #fff;
+    border-radius: 16px; padding: 20px; margin-bottom: 14px; text-align: center;
+    box-shadow: 0 8px 20px rgba(46,125,50,0.3); }
+  .promo .promo-icon { font-size: 36px; margin-bottom: 6px; }
+  .promo h2 { color: #fff; font-size: 19px; margin-bottom: 6px; }
+  .promo p { font-size: 12px; opacity: 0.95; margin-bottom: 12px; line-height: 1.6; }
+
+  .info-card {
+    background: #fff; border-radius: 16px; padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .info-card h2 {
+    color: #2e7d32; font-size: 19px; margin-bottom: 12px;
+    border-bottom: 2px solid #e8f5e9; padding-bottom: 8px;
+  }
+  .info-card h3 { color: #1b5e20; font-size: 15px; margin: 14px 0 8px; }
+  .info-card p, .info-card li { font-size: 13.5px; color: #444; line-height: 1.7; }
+  .info-card ul { padding-left: 20px; }
+  .info-card li { margin-bottom: 4px; }
+  .step-box {
+    background: #f0f8f0; border-left: 4px solid #2e7d32;
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 10px;
+  }
+  .step-box strong { color: #1b5e20; }
+  .docs-list {
+    background: #fff8e1; border-radius: 10px; padding: 12px 14px;
+    margin: 10px 0; border: 1px solid #ffe082;
+  }
+  .docs-list li { color: #5d4037; }
+
+  .info-strip {
+    background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+    border-left: 4px solid #1976d2;
+    padding: 12px 14px; border-radius: 10px;
+    font-size: 13px; margin-bottom: 14px; color: #0d47a1;
+    line-height: 1.6;
+  }
+  .info-strip strong { color: #0d47a1; }
+
+  .note { font-size: 11px; color: #888; text-align: center; margin-top: 12px; line-height: 1.6; }
+  .spacer { flex: 1; }
+  .bottom-area { margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== लॉगिन स्क्रीन ===== -->
+  <div id="loginScreen">
+    <div class="logo-card">
+      <div class="logo-icon">💼</div>
+      <h1>DGN Cyber Cafe</h1>
+      <p class="subtitle">सरकारी सेवा सहाय्यक</p>
+    </div>
+
+    <div class="wa-box">
+      <div class="wa-label">📱 WhatsApp संपर्क</div>
+      <div class="wa-num">9822759913</div>
+    </div>
+
+    <input id="phoneInput" type="tel" maxlength="10" placeholder="तुमचा मोबाइल नंबर" inputmode="numeric">
+    <button id="loginBtn" class="btn-3d" style="margin-top: 12px;">पुढे जा</button>
+
+    <p class="note">⚠ हा सरकारी ॲप नाही.<br>तुमचा डेटा फोनमध्येच राहतो.</p>
+  </div>
+
+  <!-- ===== होम स्क्रीन ===== -->
+  <div id="homeScreen" style="display: none;">
+    <div class="top-bar">
+      <div>
+        <div class="muted">नमस्कार</div>
+        <div class="phone" id="userPhone">+91 ----------</div>
+      </div>
+      <button id="logoutBtn" class="btn-3d secondary" style="width: auto; padding: 8px 14px; font-size: 13px;">बाहेर</button>
+    </div>
+
+    <div class="notice">
+      <strong>⚠ महत्त्वाचे:</strong><br>
+      हा सरकारी ॲप नाही. फॉर्म तुम्ही स्वतः सबमिट करायचा. पडताळणी सरकारी अधिकारी करतो.
+    </div>
+
+    <div class="promo">
+      <div class="promo-icon">💼</div>
+      <h2>DGN Cyber Cafe</h2>
+      <p>गिरीश नेटके<br>✅ सर्व सरकारी दाखले<br>✅ सुरुवातीला सेवा शुल्क <strong>मोफत</strong></p>
+      <button id="callBtn" class="btn-3d" style="background: #fff; color: #2e7d32; box-shadow: 0 6px 0 #c8e6c9, 0 8px 16px rgba(0,0,0,0.15);">📞 संपर्क करा</button>
+    </div>
+
+    <div class="bottom-area">
+      <button id="toggleBtn" class="btn-3d">📋 सेवा पहा</button>
+    </div>
+
+    <div class="service-list" id="serviceListHome">
+      <div class="service-container" id="serviceContainerHome"></div>
+    </div>
+
+    <p class="note">तुमची माहिती कुठेही पाठवली जात नाही</p>
+  </div>
+
+  <!-- ===== नवीन युजर माहिती पेज ===== -->
+  <div id="newUserScreen" style="display: none;">
+    <div class="top-bar">
+      <button id="backBtn" class="btn-3d secondary" style="width: auto; padding: 8px 14px; font-size: 13px;">← मागे</button>
+      <div class="muted">नवीन नोंदणी माहिती</div>
+    </div>
+
+    <div class="info-card">
+      <h2>🔐 नवीन युजर नोंदणी कशी करावी?</h2>
+
+      <p>"आपले सरकार" पोर्टलवर नवीन खाते तयार करण्यासाठी खालील पायऱ्या करा.</p>
+
+      <h3>📋 आधी ही कागदपत्रे तयार ठेवा:</h3>
+      <div class="docs-list">
+        <ul>
+          <li>आधार कार्ड (स्वतःचे + कुटुंबातील सदस्यांचे)</li>
+          <li>मोबाइल नंबर (आधारशी जोडलेला)</li>
+          <li>ईमेल आयडी</li>
+          <li>रहिवासी पुरावा (७/१२, वीज बिल, भाडे करार)</li>
+          <li>उत्पन्न पुरावा (पगार स्लिप, ITR — नोकरदार असल्यास)</li>
+          <li>पासपोर्ट साइज फोटो</li>
+        </ul>
+      </div>
+
+      <h3>🔢 नोंदणीच्या पायऱ्या:</h3>
+
+      <div class="step-box">
+        <strong>पायरी १:</strong> खाली "🔐 लॉगिन पेज उघडा" दाबा → सरकारी वेबसाईट उघडेल
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी २:</strong> "Register Here" किंवा "नवीन नोंदणी" वर क्लिक करा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ३:</strong> मोबाइल नंबर टाका → OTP द्वारे पडताळणी करा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ४:</strong> आधार क्रमांक टाका → eKYC पूर्ण करा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ५:</strong> खाते तयार झाल्यावर तुम्हाला युजरनेम + पासवर्ड मिळेल
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ६:</strong> लॉगिन करा → सेवा निवडा → अर्ज करा
+      </div>
+
+      <p class="note" style="text-align: left; margin-top: 14px;">
+        ⚠ हे पेज फक्त माहितीसाठी आहे. आम्ही सरकारी पोर्टल नाही.
+      </p>
+    </div>
+
+    <button id="continueBtn" class="btn-3d">🔐 लॉगिन पेज उघडा →</button>
+
+    <p class="note">वरील बटण दाबल्यावर अधिकृत सरकारी वेबसाईट उघडेल</p>
+  </div>
+
+  <!-- ===== सेवा माहिती पेज (प्रत्येक सेवेसाठी) ===== -->
+  <div id="serviceInfoScreen" style="display: none;">
+    <div class="top-bar">
+      <button id="backBtn2" class="btn-3d secondary" style="width: auto; padding: 8px 14px; font-size: 13px;">← मागे</button>
+      <div class="muted" id="infoTitleTop">सेवा माहिती</div>
+    </div>
+
+    <div class="info-card">
+      <div id="infoIcon" style="font-size: 48px; text-align: center; margin-bottom: 8px;">📄</div>
+      <h2 id="infoTitle" style="text-align: center;">सेवा</h2>
+
+      <div class="info-strip" id="infoText">
+        माहिती लोड होत आहे...
+      </div>
+
+      <h3>🔢 लॉगिन कसे करायचे?</h3>
+
+      <div class="step-box">
+        <strong>पायरी १:</strong> खाली "🔐 लॉगिन पेज उघडा" दाबा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी २:</strong> मोबाइल नंबर + OTP टाकून लॉगिन करा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ३:</strong> युजरनेम + पासवर्ड टाका (जर आधीच खाते असेल)
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ४:</strong> खाते नसेल तर "Register Here" वर क्लिक करा
+      </div>
+
+      <div class="step-box">
+        <strong>पायरी ५:</strong> लॉगिन झाल्यावर तुमचं सेवा पेज स्वयंचलित उघडेल
+      </div>
+
+      <p class="note" style="text-align: left; margin-top: 14px;">
+        ⚠ हे पेज फक्त माहितीसाठी आहे. आम्ही सरकारी पोर्टल नाही.
+      </p>
+    </div>
+
+    <button id="continueBtn2" class="btn-3d">🔐 लॉगिन पेज उघडा →</button>
+
+    <p class="note">वरील बटण दाबल्यावर अधिकृत सरकारी वेबसाईट उघडेल</p>
+  </div>
+
+</div>
+
+<script>
+  var SERVICES = [
+    { icon: '🔐', title: '⭐ नवीन युजर लॉगिन तयार करा', fee: 'प्रथम हे करा', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर नवीन खाते तयार करा. मोबाइल क्रमांक आणि आधार कार्डद्वारे नोंदणी करा.', highlight: true, special: 'newuser' },
+    { icon: '📄', title: 'उत्पन्नाचा दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. डॅशबोर्डवर "Revenue Department" निवडा आणि "Income Certificate" वर क्लिक करा.' },
+    { icon: '🏞', title: '७/१२ उतारा', fee: 'मोफत', url: 'https://bhulekh.mahabhumi.gov.in', info: 'महाभूलेख पोर्टलवर जिल्हा, तालुका, गाव निवडा. सर्वे नंबर टाका आणि कॅप्चा भरून उतारा पहा. लॉगिन आवश्यक नाही.' },
+    { icon: '🏠', title: 'रहिवासी दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Residence Certificate" अर्ज निवडा.' },
+    { icon: '📜', title: 'अधिवास प्रमाणपत्र', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Domicile Certificate" अर्ज निवडा.' },
+    { icon: '🎫', title: 'जात दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Caste Certificate" अर्ज निवडा.' },
+    { icon: '📋', title: 'नॉन-क्रीमी लेयर', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Non-Creamy Layer Certificate" अर्ज निवडा.' },
+    { icon: '👶', title: 'जन्म दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Rural Development" किंवा "Revenue Department" मधून जन्म नोंदणी अर्ज निवडा.' },
+    { icon: '⚰️', title: 'मृत्यू दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Rural Development" किंवा "Revenue Department" मधून मृत्यू नोंदणी अर्ज निवडा.' },
+    { icon: '💍', title: 'विवाह नोंदणी', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Rural Development" किंवा "Revenue Department" मधून विवाह नोंदणी अर्ज निवडा.' },
+    { icon: '👴', title: 'ज्येष्ठ नागरिक दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Social Welfare" विभागातून "Senior Citizen Certificate" अर्ज निवडा.' },
+    { icon: '🛡', title: 'पोलीस व्हेरिफिकेशन', fee: 'मोफत', url: 'https://pcs.mahaonline.gov.in/Forms/Home.aspx', info: 'पोलीस क्लिअरन्स सर्व्हिसेस पोर्टलवर नोंदणी करा. मोबाइल नंबर आणि OTP द्वारे लॉगिन करा. अर्ज भरा आणि आवश्यक कागदपत्रे अपलोड करा.' },
+    { icon: '🛂', title: 'पासपोर्ट क्लिअरन्स', fee: 'मोफत', url: 'https://pcs.mahaonline.gov.in/Forms/Home.aspx', info: 'पोलीस क्लिअरन्स सर्व्हिसेस पोर्टलवर लॉगिन करा. "Passport Clearance Certificate" अर्ज निवडा आणि आवश्यक माहिती भरा.' },
+    { icon: '📑', title: 'भाडे करार पत्र', fee: 'मोफत', url: 'https://igrmaharashtra.gov.in/Home', info: 'IGR महाराष्ट्र पोर्टलवर नोंदणी करा. जिल्हा निवडा, पासवर्ड तयार करा आणि कॅप्चा भरा. "New Entry" मधून भाडे करार अर्ज निवडा.' },
+    { icon: '🗺', title: 'जमीन चार्ट / नकाशा', fee: 'मोफत', url: 'https://mahabhunakasha.mahabhumi.gov.in', info: 'महाभूनकाशा पोर्टलवर जिल्हा, तालुका, गाव निवडा. नकाशा पहा किंवा डाउनलोड करा. लॉगिन आवश्यक नाही.' },
+    { icon: '🏘', title: 'मालमत्ता कार्ड', fee: 'मोफत', url: 'https://mahabhumi.gov.in', info: 'महाभूमी पोर्टलवर मालमत्ता कार्ड पहा. लॉगिन आवश्यक नाही.' },
+    { icon: '📊', title: 'सॉल्व्हन्सी सर्टिफिकेट', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Solvency Certificate" अर्ज निवडा.' },
+    { icon: '🌾', title: 'लघु भूधारक शेतकरी दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Small Land Holder Farmer Certificate" अर्ज निवडा.' },
+    { icon: '🏔', title: 'डोंगराळ भागातील रहिवासी दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Hill Area Resident Certificate" अर्ज निवडा.' },
+    { icon: '📝', title: 'सामान्य प्रतिज्ञापत्र', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Affidavit" अर्ज निवडा.' },
+    { icon: '👨‍👩‍👧', title: 'विभक्त कुटुंब दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "Separate Family Certificate" अर्ज निवडा.' },
+    { icon: '💰', title: 'दारिद्र्यरेषेखालील दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Rural Development" मधून "BPL Certificate" अर्ज निवडा.' },
+    { icon: '🧾', title: 'थकबाकी नसल्याचा दाखला', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Revenue Department" मधून "No Dues Certificate" अर्ज निवडा.' },
+    { icon: '🎓', title: 'बोनाफाइड सर्टिफिकेट', fee: 'मोफत', url: 'https://aaplesarkar.mahaonline.gov.in', info: 'आपले सरकार पोर्टलवर लॉगिन करा. "Education Department" मधून "Bonafide Certificate" अर्ज निवडा.' }
+  ];
+
+  function buildServices(containerId) {
+    var html = '';
+    for (var i = 0; i < SERVICES.length; i++) {
+      var s = SERVICES[i];
+      var cls = 'service-item' + (s.highlight ? ' highlight' : '');
+      html += '<div class="' + cls + '" data-index="' + i + '">' +
+                '<span class="icon">' + s.icon + '</span>' +
+                '<div class="title">' + s.title +
+                  '<div class="fee">' + (s.highlight ? s.fee : 'सेवा शुल्क: ' + s.fee) + '</div>' +
+                '</div>' +
+                '<span class="arrow">›</span>' +
+              '</div>';
+    }
+    document.getElementById(containerId).innerHTML = html;
+  }
+  buildServices('serviceContainerHome');
+
+  var loginScreen = document.getElementById('loginScreen');
+  var homeScreen = document.getElementById('homeScreen');
+  var newUserScreen = document.getElementById('newUserScreen');
+  var serviceInfoScreen = document.getElementById('serviceInfoScreen');
+  var phoneInput = document.getElementById('phoneInput');
+  var userPhone = document.getElementById('userPhone');
+  var currentServiceUrl = '';
+
+  function showScreen(id) {
+    loginScreen.style.display = 'none';
+    homeScreen.style.display = 'none';
+    newUserScreen.style.display = 'none';
+    serviceInfoScreen.style.display = 'none';
+    if (id === 'login') loginScreen.style.display = 'block';
+    else if (id === 'home') homeScreen.style.display = 'block';
+    else if (id === 'newuser') newUserScreen.style.display = 'block';
+    else if (id === 'serviceinfo') serviceInfoScreen.style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  // ===== लॉगिन =====
+  document.getElementById('loginBtn').onclick = function() {
+    var v = phoneInput.value.trim();
+    if (!/^\d{10}$/.test(v)) { alert('कृपया 10 अंकी नंबर टाका'); return; }
+    localStorage.setItem('phone', v);
+    userPhone.textContent = '+91 ' + v;
+    showScreen('home');
+  };
+
+  document.getElementById('logoutBtn').onclick = function() {
+    localStorage.removeItem('phone');
+    phoneInput.value = '';
+    serviceListHome.classList.remove('open');
+    toggleBtn.textContent = '📋 सेवा पहा';
+    homeOpen = false;
+    showScreen('login');
+  };
+
+  var toggleBtn = document.getElementById('toggleBtn');
+  var serviceListHome = document.getElementById('serviceListHome');
+  var homeOpen = false;
+  toggleBtn.onclick = function() {
+    homeOpen = !homeOpen;
+    serviceListHome.classList.toggle('open', homeOpen);
+    toggleBtn.textContent = homeOpen ? '⬆ सेवा लपवा' : '📋 सेवा पहा';
+  };
+
+  // ===== सेवेवर टॅप =====
+  document.addEventListener('click', function(e) {
+    var item = e.target.closest('.service-item');
+    if (!item || !item.dataset.index) return;
+    var s = SERVICES[parseInt(item.dataset.index)];
+
+    if (s.special === 'newuser') {
+      showScreen('newuser');
+    } else {
+      // सेवा माहिती पेज उघड
+      document.getElementById('infoIcon').textContent = s.icon;
+      document.getElementById('infoTitle').textContent = s.title;
+      document.getElementById('infoTitleTop').textContent = s.title;
+      document.getElementById('infoText').innerHTML = '<strong>ℹ️ माहिती:</strong><br>' + s.info;
+      currentServiceUrl = s.url;
+      showScreen('serviceinfo');
+    }
+  });
+
+  // ===== नवीन युजर — लॉगिन पेज =====
+  document.getElementById('continueBtn').onclick = function() {
+    window.open('https://aaplesarkar.mahaonline.gov.in/en/Registration/Register', '_blank', 'noopener');
+  };
+
+  // ===== सेवा — लॉगिन पेज =====
+  document.getElementById('continueBtn2').onclick = function() {
+    if (currentServiceUrl) {
+      window.open(currentServiceUrl, '_blank', 'noopener');
+    }
+  };
+
+  // ===== मागे बटणे =====
+  document.getElementById('backBtn').onclick = function() {
+    var saved = localStorage.getItem('phone') || '';
+    if (saved) {
+      userPhone.textContent = '+91 ' + saved;
+      showScreen('home');
+    } else {
+      showScreen('login');
+    }
+  };
+
+  document.getElementById('backBtn2').onclick = function() {
+    var saved = localStorage.getItem('phone') || '';
+    if (saved) {
+      userPhone.textContent = '+91 ' + saved;
+      showScreen('home');
+    } else {
+      showScreen('login');
+    }
+  };
+
+  document.getElementById('callBtn').onclick = function() {
+    window.location.href = 'tel:9822759913';
+  };
+
+  // ===== आधीच लॉगिन =====
+  var saved = localStorage.getItem('phone');
+  if (saved) {
+    userPhone.textContent = '+91 ' + saved;
+    showScreen('home');
+  } else {
+    showScreen('login');
+  }
+</script>
+</body>
+</html>
